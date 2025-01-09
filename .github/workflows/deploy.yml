@@ -6,18 +6,32 @@ on:
       - master
 
 jobs:
-  deploy-via-sftp:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
-        with:
-          username: root
-          server: matthijsverheijen.com
-          port: 22
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          local_path: ./*
-          remote_path: /opt/docker_containers/web/matthijsverheijen.com/test/html
-          args: "-o ConnectTimeout=5"
+
+      - name: Set up SSH
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openssh-client
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Test SSH connection
+        run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22 root@matthijsverheijen.com 'echo connected'
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz -e "ssh -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
+
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    # Optional: Define an environment for deployment, like production
+    environment:
+      name: production
+      url: https://test.matthijsverheijen.com
