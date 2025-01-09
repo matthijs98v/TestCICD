@@ -6,11 +6,34 @@ on:
       - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Setting up Nodejs envoirment
+        run: apt install nodejs -y && apt install npm -y
+
+      - name: Install requirements
+        run: npm install
+
+      - name: Build static files for vue
+        run: npm run build
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-artifact
+          path: /dist/*
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download output artifact from te build process
+        uses: actions/download-artifact@v4
+        with:
+          name: output-artifact
 
       - name: Set up SSH
         run: |
@@ -27,7 +50,7 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -avz --exclude ".*" --exclude "README.md" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
 
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
