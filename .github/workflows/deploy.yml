@@ -6,22 +6,18 @@ on:
       - master
 
 jobs:
-  deploy:
+  deploy-via-sftp:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Deploy
         uses: actions/checkout@v3
-
-      - name: Set up SSH key manually
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Add SSH private key from GitHub Secrets
-          chmod 600 ~/.ssh/id_rsa  # Set proper permissions on the private key file
-
-          # Add GitHub's SSH keys to known hosts to avoid authenticity prompts
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-
-      - name: Deploy files to VPS using SCP
-        run: |
-          # Use SCP to copy files to the VPS
-          scp -r ./ root@168.119.157.183:/opt/docker_containers/web/matthijsverheijen.com/test/html
+      - name: SFTP Deploy
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
+        with:
+          username: root
+          server: matthijsverheijen.com
+          port: 22 # default is 22
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          local_path: ./*
+          remote_path: /opt/docker_containers/web/matthijsverheijen.com/test/html
+          args: "-o ConnectTimeout=5"
