@@ -21,7 +21,7 @@ jobs:
           # Add GitHub's SSH keys to known hosts to avoid authenticity prompts
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Deploy files to VPS using SCP 1
+      - name: Deploy files to VPS using SCP
         run: |
           # Use SCP to copy files to the VPS
           scp -r ./ root@168.119.157.183:/opt/docker_containers/web/matthijsverheijen.com/test/html
