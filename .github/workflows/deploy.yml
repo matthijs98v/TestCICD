@@ -16,7 +16,7 @@ jobs:
         with:
           username: root
           server: matthijsverheijen.com
-          port: 22 # default is 22
+          port: 22
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           local_path: ./*
           remote_path: /opt/docker_containers/web/matthijsverheijen.com/test/html
