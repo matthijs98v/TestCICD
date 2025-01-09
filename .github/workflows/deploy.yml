@@ -12,10 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Set up SSH key manually
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Add SSH private key from GitHub Secrets
+          chmod 600 ~/.ssh/id_rsa  # Set proper permissions on the private key file
+
+          # Add GitHub's SSH keys to known hosts to avoid authenticity prompts
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Deploy files to VPS using SCP
         run: |
