@@ -27,7 +27,7 @@ jobs:
 
       - name: Deploy via rsync
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
+          rsync -avz --delete --exclude ".*" --exclude "README.md" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
 
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
