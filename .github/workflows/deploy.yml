@@ -17,10 +17,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openssh-client
           mkdir -p ~/.ssh
+          eval $(ssh-agent -s)
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          eval $(ssh-agent -s)
 
       - name: Test SSH connection
         run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22 root@matthijsverheijen.com 'echo connected'
