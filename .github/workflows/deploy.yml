@@ -23,11 +23,11 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Test SSH connection
-        run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22 root@matthijsverheijen.com 'echo connected'
+        run: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22 root@matthijsverheijen.com 'rm -rf /opt/docker_containers/web/matthijsverheijen.com/test/html/*'
 
       - name: Deploy via rsync
         run: |
-          rsync -avz --exclude ".*" --exclude "README.md" --delete --ignore-existing -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
+          rsync -avz --exclude ".*" --exclude "README.md" -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 22" ./ root@matthijsverheijen.com:/opt/docker_containers/web/matthijsverheijen.com/test/html
 
     env:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
