@@ -23,10 +23,5 @@ jobs:
 
       - name: Deploy files to VPS using SCP
         run: |
-          # Set the VPS details
-          VPS_USER="root"
-          VPS_HOST="your_vps_ip_or_hostname"
-          VPS_DIR="/opt/docker_containers/web/matthijsverheijen.com/test/html"
-
           # Use SCP to copy files to the VPS
           scp -r ./ $VPS_USER@$VPS_HOST:$VPS_DIR
