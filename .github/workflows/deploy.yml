@@ -29,4 +29,4 @@ jobs:
           VPS_DIR="/opt/docker_containers/web/matthijsverheijen.com/test/html"
 
           # Use SCP to copy files to the VPS
-          scp -r -i ${{ secrets.SSH_PRIVATE_KEY }} -o StrictHostKeyChecking=no ./ $VPS_USER@$VPS_HOST:$VPS_DIR
+          scp -r ./ $VPS_USER@$VPS_HOST:$VPS_DIR
